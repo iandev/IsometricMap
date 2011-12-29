@@ -33,8 +33,8 @@ ig.module(
     },
 
     tileToScreen: function (tileX, tileY) {
-      screenX = ((this.tilesizeOn2)*tileX) - ((this.tilesizeOn2)*tileY);
-      screenY = ((this.tilesizeOn4)*tileY) + ((this.tilesizeOn4)*tileX) + tileX + tileY - (this.tilesizeOn2) + 1;
+      screenX = this.tilesizeOn2 * (tileX - tileY);
+      screenY = this.tilesizeOn4 * (tileY + tileX) + tileX + tileY - (this.tilesizeOn2) + 1;
       return [screenX, screenY];
     },
 
