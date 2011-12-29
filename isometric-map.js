@@ -20,12 +20,12 @@ ig.module(
     setAngles: function(theta,alpha) {
       this.newTheta += theta;
       this.newAlpha += alpha;
-      this.theta = this.newTheta * Math.PI/180;
-      this.alpha = this.newAlpha * Math.PI/180;
-      this.sinTheta = Math.sin(this.theta);
-      this.cosTheta = Math.cos(this.theta);
-      this.sinAlpha = Math.sin(this.alpha);
-      this.cosAlpha = Math.cos(this.alpha);
+      var thetaDegrees = this.newTheta * Math.PI/180;
+      var alphaDegrees = this.newAlpha * Math.PI/180;
+      this.sinTheta = Math.sin(thetaDegrees);
+      this.cosTheta = Math.cos(thetaDegrees);
+      this.sinAlpha = Math.sin(alphaDegrees);
+      this.cosAlpha = Math.cos(alphaDegrees);
     },
     toScreen: function(xpp, ypp, zpp) {
       var yp = ypp;
