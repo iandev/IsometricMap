@@ -38,6 +38,12 @@ ig.module(
       return [Math.floor(screenX), Math.floor(screenY)];
     },
 
+    screenToTile: function (screenX, screenY) {
+      var tileX = (screenX / this.tilesize) + ((screenY + this.tilesizeOn2) / (this.tilesizeOn2 + 2));
+      var tileY = ((screenY + this.tilesizeOn2) / (this.tilesizeOn2 + 2)) - (screenX / this.tilesize);
+      return [tileX, tileY];
+    },
+
     toScreen: function(xpp, ypp, zpp) {
       var yp = ypp;
       var xp = xpp * this.cosAlpha + zpp * this.sinAlpha;
