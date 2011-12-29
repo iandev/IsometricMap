@@ -48,6 +48,7 @@ ig.module(
     },
 
     draw: function() {
+
       if(!this.tiles.loaded) {
         return;
       }
@@ -108,7 +109,6 @@ ig.module(
           if( (tile = this.data[tileY][tileX]) ) {
               iso_pxX = ((this.tilesize/2)*tileX) - ((this.tilesize/2)*tileY);
               iso_pxY = ((this.tilesize/4)*tileY) + ((this.tilesize/4)*tileX);
-              var tmp = this.toScreen(iso_pxX, 0, iso_pxY);
 
               this.tiles.drawTile(iso_pxX+250, iso_pxY, tile-1, this.tilesize );
           }
