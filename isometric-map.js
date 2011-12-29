@@ -13,11 +13,12 @@ ig.module(
       this.parent(tilesize, data, tileset);
       this.theta = 0;
       this.alpha = 0;
+      this.piOn180 = Math.PI / 180;
       this.addDegrees(30, 45);
     },
 
     addDegrees: function(theta,alpha) {
-      this.addRadians(this.theta * Math.PI/180, this.alpha * Math.PI/180);
+      this.addRadians(this.theta * this.piOn180, this.alpha * this.piOn180);
     },
 
     addRadians: function(theta, alpha) {
