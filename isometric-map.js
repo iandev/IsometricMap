@@ -32,6 +32,12 @@ ig.module(
       this.cosAlpha = Math.cos(alpha);
     },
 
+    tileToScreen: function (tileX, tileY) {
+      screenX = ((this.tilesizeOn2)*tileX) - ((this.tilesizeOn2)*tileY);
+      screenY = ((this.tilesizeOn4)*tileY) + ((this.tilesizeOn4)*tileX) + tileX + tileY - (this.tilesizeOn2) + 1;
+      return [screenX, screenY];
+    },
+
     toScreen: function(xpp, ypp, zpp) {
       var yp = ypp;
       var xp = xpp * this.cosAlpha + zpp * this.sinAlpha;
@@ -109,10 +115,8 @@ ig.module(
 
           // Draw!
           if( (tile = this.data[tileY][tileX]) ) {
-              iso_pxX = ((this.tilesizeOn2)*tileX) - ((this.tilesizeOn2)*tileY);
-              iso_pxY = ((this.tilesizeOn4)*tileY) + ((this.tilesizeOn4)*tileX) + tileX + tileY - (this.tilesizeOn2) + 1;
-
-              this.tiles.drawTile(iso_pxX, iso_pxY, tile-1, this.tilesize );
+              screenCoords = this.tileToScreen(tileX, tileY);
+              this.tiles.drawTile(screenCoords[0], screenCoords[1], tile-1, this.tilesize );
           }
 
         } // end for x
