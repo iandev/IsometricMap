@@ -110,7 +110,7 @@ ig.module(
               iso_pxX = ((this.tilesize/2)*tileX) - ((this.tilesize/2)*tileY);
               iso_pxY = ((this.tilesize/4)*tileY) + ((this.tilesize/4)*tileX);
 
-              this.tiles.drawTile(iso_pxX+250, iso_pxY, tile-1, this.tilesize );
+              this.tiles.drawTile(iso_pxX, iso_pxY, tile-1, this.tilesize );
           }
 
         } // end for x
