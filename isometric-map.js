@@ -1,5 +1,5 @@
 ig.module(
-  'plugins.isometric-map'
+  'plugins.isometricmap.isometric-map'
 )
 .requires(
   'impact.impact',
