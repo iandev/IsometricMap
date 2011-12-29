@@ -9,8 +9,8 @@ ig.module(
   ig.IsometricMap = ig.BackgroundMap.extend({
     init: function( tilesize, data, tileset ) {
       this.parent(tilesize, data, tileset);
-      this.newTheta = 0;
-      this.newAlpha = 0;
+      this.theta = 0;
+      this.alpha = 0;
       this.setAngles(30, 45);
       this.xFactor = 32;
       this.yFactor = 16;
@@ -18,10 +18,10 @@ ig.module(
       this.mouseY = 0;
     },
     setAngles: function(theta,alpha) {
-      this.newTheta += theta;
-      this.newAlpha += alpha;
-      var thetaDegrees = this.newTheta * Math.PI/180;
-      var alphaDegrees = this.newAlpha * Math.PI/180;
+      this.theta += theta;
+      this.alpha += alpha;
+      var thetaDegrees = this.theta * Math.PI/180;
+      var alphaDegrees = this.alpha * Math.PI/180;
       this.sinTheta = Math.sin(thetaDegrees);
       this.cosTheta = Math.cos(thetaDegrees);
       this.sinAlpha = Math.sin(alphaDegrees);
