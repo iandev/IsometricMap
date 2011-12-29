@@ -6,6 +6,7 @@ ig.module(
   'impact.background-map'
 )
 .defines(function(){
+
   ig.IsometricMap = ig.BackgroundMap.extend({
     init: function( tilesize, data, tileset ) {
       this.parent(tilesize, data, tileset);
@@ -17,6 +18,7 @@ ig.module(
       this.mouseX = 0;
       this.mouseY = 0;
     },
+
     setAngles: function(theta,alpha) {
       this.theta += theta;
       this.alpha += alpha;
@@ -27,6 +29,7 @@ ig.module(
       this.sinAlpha = Math.sin(alphaDegrees);
       this.cosAlpha = Math.cos(alphaDegrees);
     },
+
     toScreen: function(xpp, ypp, zpp) {
       var yp = ypp;
       var xp = xpp * this.cosAlpha + zpp * this.sinAlpha;
@@ -36,12 +39,14 @@ ig.module(
       var z = zp * this.cosTheta + yp * this.sinTheta;
       return [x, y, z];
     },
+
     toIso: function(screenX, screenY) {
       var z = (screenX / this.cosAlpha - screenY / (this.sinAlpha * this.sinTheta)) * (1 / (this.cosAlpha / this.sinAlpha + this.sinAlpha / this.cosAlpha));
       var x = (1 / this.cosAlpha) * (screenX - z * this.sinAlpha);
       
       return [x, z];
     },
+
     draw: function() {
       if(!this.tiles.loaded) {
         return;
@@ -65,12 +70,11 @@ ig.module(
         this.setAngles((mouseDiffX/4), (mouseDiffY/4));
       }
       
-      //
-      
       this.drawTiled();
       //console.log('stopped');
       //ig.system.stopRunLoop();
     },
+
     drawTiled: function() {
       var tile = 0,
       anim = null,
@@ -123,5 +127,7 @@ ig.module(
         } // end for x
       } // end for y
     }
+
   });
+
 });
