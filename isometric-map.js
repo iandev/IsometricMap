@@ -18,7 +18,7 @@ ig.module(
     },
 
     addDegrees: function(theta,alpha) {
-      this.addRadians(this.theta * this.piOn180, this.alpha * this.piOn180);
+      this.addRadians(theta * this.piOn180, alpha * this.piOn180);
     },
 
     addRadians: function(theta, alpha) {
