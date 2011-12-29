@@ -13,18 +13,18 @@ ig.module(
       this.parent(tilesize, data, tileset);
       this.theta = 0;
       this.alpha = 0;
-      this.setAngles(30, 45);
+      this.addDegrees(30, 45);
     },
 
-    setAngles: function(theta,alpha) {
+    addDegrees: function(theta,alpha) {
       this.theta += theta;
       this.alpha += alpha;
-      var thetaDegrees = this.theta * Math.PI/180;
-      var alphaDegrees = this.alpha * Math.PI/180;
-      this.sinTheta = Math.sin(thetaDegrees);
-      this.cosTheta = Math.cos(thetaDegrees);
-      this.sinAlpha = Math.sin(alphaDegrees);
-      this.cosAlpha = Math.cos(alphaDegrees);
+      var thetaRadians = this.theta * Math.PI/180;
+      var alphaRadians = this.alpha * Math.PI/180;
+      this.sinTheta = Math.sin(thetaRadians);
+      this.cosTheta = Math.cos(thetaRadians);
+      this.sinAlpha = Math.sin(alphaRadians);
+      this.cosAlpha = Math.cos(alphaRadians);
     },
 
     toScreen: function(xpp, ypp, zpp) {
@@ -49,10 +49,10 @@ ig.module(
         return;
       }
       
-      if (ig.input.pressed('a'))      this.setAngles(-1,0);
-      if (ig.input.pressed('d'))      this.setAngles(1,0);
-      if (ig.input.pressed('w'))      this.setAngles(0,-1);
-      if (ig.input.pressed('s'))      this.setAngles(0,1);
+      if (ig.input.pressed('a'))      this.addDegrees(-1,0);
+      if (ig.input.pressed('d'))      this.addDegrees(1,0);
+      if (ig.input.pressed('w'))      this.addDegrees(0,-1);
+      if (ig.input.pressed('s'))      this.addDegrees(0,1);
       
       this.drawTiled();
     },
