@@ -13,10 +13,6 @@ ig.module(
       this.theta = 0;
       this.alpha = 0;
       this.setAngles(30, 45);
-      this.xFactor = 32;
-      this.yFactor = 16;
-      this.mouseX = 0;
-      this.mouseY = 0;
     },
 
     setAngles: function(theta,alpha) {
@@ -51,24 +47,11 @@ ig.module(
       if(!this.tiles.loaded) {
         return;
       }
-      var mouseDiffX = this.mouseX - ig.input.mouse.x;
-      var mouseDiffY = ig.input.mouse.y - this.mouseY;
-      this.mouseX = ig.input.mouse.x;
-      this.mouseY = ig.input.mouse.y;
       
-      
-      if (ig.input.pressed('north'))  this.yFactor -= 0.5;
-      if (ig.input.pressed('south'))  this.yFactor += 0.5;
-      if (ig.input.pressed('east'))   this.xFactor -= 0.5;
-      if (ig.input.pressed('west'))   this.xFactor += 0.5;
       if (ig.input.pressed('a'))      this.setAngles(-1,0);
       if (ig.input.pressed('d'))      this.setAngles(1,0);
       if (ig.input.pressed('w'))      this.setAngles(0,-1);
       if (ig.input.pressed('s'))      this.setAngles(0,1);
-      
-      if (Math.abs(mouseDiffX) <= 4 && Math.abs(mouseDiffY) <= 4) {
-        this.setAngles((mouseDiffX/4), (mouseDiffY/4));
-      }
       
       this.drawTiled();
       //console.log('stopped');
@@ -115,14 +98,8 @@ ig.module(
               iso_pxX = ((this.tilesize/2)*tileX) - ((this.tilesize/2)*tileY);
               iso_pxY = ((this.tilesize/4)*tileY) + ((this.tilesize/4)*tileX);
               var tmp = this.toScreen(iso_pxX, 0, iso_pxY);
-              var tmpIso = this.toIso((tileX*this.xFactor), (tileY*(this.yFactor)));
-              //console.log('toScreen:', tmp);
-              //console.log('toIso:', tmpIso);
-              //console.log('tileX/Y:', tileX*24, tileY*24);
-              //console.log('--');
-              
+
               this.tiles.drawTile(iso_pxX+250, iso_pxY, tile-1, this.tilesize );
-              //this.tiles.drawTile(tmpIso[0], tmpIso[1]+250, tile-1, this.tilesize, this.tilesize);
           }
         } // end for x
       } // end for y
