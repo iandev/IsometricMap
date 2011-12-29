@@ -54,8 +54,6 @@ ig.module(
       if (ig.input.pressed('s'))      this.setAngles(0,1);
       
       this.drawTiled();
-      //console.log('stopped');
-      //ig.system.stopRunLoop();
     },
 
     drawTiled: function() {
