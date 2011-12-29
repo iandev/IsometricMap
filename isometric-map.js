@@ -17,14 +17,16 @@ ig.module(
     },
 
     addDegrees: function(theta,alpha) {
+      this.addRadians(this.theta * Math.PI/180, this.alpha * Math.PI/180);
+    },
+
+    addRadians: function(theta, alpha) {
       this.theta += theta;
       this.alpha += alpha;
-      var thetaRadians = this.theta * Math.PI/180;
-      var alphaRadians = this.alpha * Math.PI/180;
-      this.sinTheta = Math.sin(thetaRadians);
-      this.cosTheta = Math.cos(thetaRadians);
-      this.sinAlpha = Math.sin(alphaRadians);
-      this.cosAlpha = Math.cos(alphaRadians);
+      this.sinTheta = Math.sin(theta);
+      this.cosTheta = Math.cos(theta);
+      this.sinAlpha = Math.sin(alpha);
+      this.cosAlpha = Math.cos(alpha);
     },
 
     toScreen: function(xpp, ypp, zpp) {
