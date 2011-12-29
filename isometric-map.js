@@ -14,6 +14,8 @@ ig.module(
       this.theta = 0;
       this.alpha = 0;
       this.piOn180 = Math.PI / 180;
+      this.tilesizeOn2 = tilesize / 2;
+      this.tilesizeOn4 = tilesize / 4;
       this.addDegrees(30, 45);
     },
 
@@ -107,8 +109,8 @@ ig.module(
 
           // Draw!
           if( (tile = this.data[tileY][tileX]) ) {
-              iso_pxX = ((this.tilesize/2)*tileX) - ((this.tilesize/2)*tileY);
-              iso_pxY = ((this.tilesize/4)*tileY) + ((this.tilesize/4)*tileX);
+              iso_pxX = ((this.tilesizeOn2)*tileX) - ((this.tilesizeOn2)*tileY);
+              iso_pxY = ((this.tilesizeOn4)*tileY) + ((this.tilesizeOn4)*tileX) + tileX + tileY - (this.tilesizeOn2) + 1;
 
               this.tiles.drawTile(iso_pxX, iso_pxY, tile-1, this.tilesize );
           }
