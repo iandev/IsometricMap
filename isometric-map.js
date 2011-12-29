@@ -8,6 +8,7 @@ ig.module(
 .defines(function(){
 
   ig.IsometricMap = ig.BackgroundMap.extend({
+
     init: function( tilesize, data, tileset ) {
       this.parent(tilesize, data, tileset);
       this.theta = 0;
@@ -75,7 +76,11 @@ ig.module(
       
         // Repeat Y?
         if( tileY >= this.height || tileY < 0 ) {
-          if( !this.repeat ) { continue; }
+
+          if( !this.repeat ) {
+              continue;
+          }
+
           tileY = tileY > 0
             ? tileY % this.height
             : ((tileY+1) % this.height) + this.height - 1;
@@ -86,11 +91,16 @@ ig.module(
       
           // Repeat X?
           if( tileX >= this.width || tileX < 0 ) {
-            if( !this.repeat ) { continue; }
+
+            if( !this.repeat ) {
+                continue;
+            }
+
             tileX = tileX > 0
               ? tileX % this.width
               : ((tileX+1) % this.width) + this.width - 1;
           }
+
           // Draw!
           if( (tile = this.data[tileY][tileX]) ) {
               iso_pxX = ((this.tilesize/2)*tileX) - ((this.tilesize/2)*tileY);
@@ -99,6 +109,7 @@ ig.module(
 
               this.tiles.drawTile(iso_pxX+250, iso_pxY, tile-1, this.tilesize );
           }
+
         } // end for x
       } // end for y
     }
