@@ -16,7 +16,17 @@ ig.module(
       this.piOn180 = Math.PI / 180;
       this.tilesizeOn2 = tilesize / 2;
       this.tilesizeOn4 = tilesize / 4;
-      this.addDegrees(30, 45);
+      this.addDegrees(45, 26.5650512);//35.2643896);
+    },
+
+    setDegrees: function(theta,alpha) {
+      this.setRadians(theta * this.piOn180, alpha * this.piOn180);
+    },
+
+    setRadians: function(theta, alpha) {
+      this.theta = theta;
+      this.alpha = alpha;
+      this.recalculateAngles();
     },
 
     addDegrees: function(theta,alpha) {
@@ -26,10 +36,14 @@ ig.module(
     addRadians: function(theta, alpha) {
       this.theta += theta;
       this.alpha += alpha;
-      this.sinTheta = Math.sin(theta);
-      this.cosTheta = Math.cos(theta);
-      this.sinAlpha = Math.sin(alpha);
-      this.cosAlpha = Math.cos(alpha);
+      this.recalculateAngles();
+    },
+
+    recalculateAngles: function() {
+      this.sinTheta = Math.sin(this.theta);
+      this.cosTheta = Math.cos(this.theta);
+      this.sinAlpha = Math.sin(this.alpha);
+      this.cosAlpha = Math.cos(this.alpha);
     },
 
     tileToScreen: function (tileX, tileY) {
@@ -44,21 +58,20 @@ ig.module(
       return [tileX, tileY];
     },
 
-    toScreen: function(xpp, ypp, zpp) {
-      var yp = ypp;
-      var xp = xpp * this.cosAlpha + zpp * this.sinAlpha;
-      var zp = zpp * this.cosAlpha + xpp * this.sinAlpha;
-      var x = xp;
-      var y = yp * this.cosTheta - zp * this.sinTheta;
-      var z = zp * this.cosTheta + yp * this.sinTheta;
-      return [x, y, z];
+    toScreen: function(worldX, worldY, worldZ) {
+      var xsinzcos = (worldX * this.sinTheta) + (worldZ * this.cosTheta);
+      var screenX = (worldX * this.cosTheta) - (worldZ * this.sinTheta);
+      var screenY = (this.sinAlpha * xsinzcos) + (worldY * this.cosAlpha);
+      screenX *= this.tilesize;
+      screenY *= this.tilesize;
+      return [screenX, screenY];
     },
 
     toIso: function(screenX, screenY) {
-      var z = (screenX / this.cosAlpha - screenY / (this.sinAlpha * this.sinTheta)) * (1 / (this.cosAlpha / this.sinAlpha + this.sinAlpha / this.cosAlpha));
-      var x = (1 / this.cosAlpha) * (screenX - z * this.sinAlpha);
-      
-      return [x, z];
+      var worldX = (screenX * this.cosTheta) + (screenY * this.sinTheta * this.sinAlpha);
+      var worldY = (screenY * this.cosAlpha);
+      var worldZ = -(screenX * this.sinTheta) + (screenY * this.sinAlpha * this.cosTheta);
+      return [worldX, worldY, worldZ];
     },
 
     draw: function() {
@@ -73,6 +86,9 @@ ig.module(
       if (ig.input.pressed('s'))      this.addDegrees(0,1);
       
       this.drawTiled();
+
+      //console.log('stopped');
+      //ig.system.stopRunLoop();
     },
 
     drawTiled: function() {
@@ -121,7 +137,8 @@ ig.module(
 
           // Draw!
           if( (tile = this.data[tileY][tileX]) ) {
-              screenCoords = this.tileToScreen(tileX, tileY);
+              //screenCoords = this.tileToScreen(tileX, tileY);
+              screenCoords = this.toScreen(tileX, 0, tileY);
               this.tiles.drawTile(screenCoords[0], screenCoords[1], tile-1, this.tilesize );
           }
 
