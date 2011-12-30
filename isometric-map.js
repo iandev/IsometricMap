@@ -29,8 +29,7 @@ ig.IsometricMap = ig.BackgroundMap.extend({
 
         this.parent(tilesize, data, tileset);
 
-        this.alpha = Math.atan(0.5);
-        this.recalculateAngles();
+        this.calculateAngles();
 
         /*
            This is calculated by determining the 'length' of one of the sides of
@@ -59,13 +58,14 @@ ig.IsometricMap = ig.BackgroundMap.extend({
         this.edgeLength = ((this.tilesize + 2) / 2) * Math.sqrt(5) / 2;
     },
 
-    recalculateAngles: function() {
+    calculateAngles: function() {
+        this.alpha = Math.atan(0.5);
         this.sinAlpha = Math.sin(this.alpha);
         this.cosAlpha = Math.cos(this.alpha);
     },
 
     worldToScreen: function(tileX, height, tileZ) {
-        // screen coordinates of arbitrary world tile
+        // screen coordinates of center of world tile
         var xs = ((tileX - tileZ) * this.cosAlpha * this.edgeLength) - this.originX;
         var ys = (((tileX + tileZ) * this.sinAlpha - height) * this.edgeLength) - this.originY;
 
@@ -151,6 +151,7 @@ ig.IsometricMap = ig.BackgroundMap.extend({
 
                     var screen = this.worldToScreen(tileX, 0, tileY);
 
+                    // note position adjusted to be top-left of image
                     this.tiles.drawTile(screen[0], screen[1], tile-1, this.tilesize );
                 }
 
