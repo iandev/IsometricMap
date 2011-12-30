@@ -9,69 +9,85 @@ ig.module(
 
   ig.IsometricMap = ig.BackgroundMap.extend({
 
+      tileOffsetX: 0,
+      tileOffsetY: 0,
+      tileOffsetZ: 0,
+
+      pxOffsetX: 0,
+      pxOffsetY: 0,
+
+      pxMinX: 0,
+      pxMinY: 0,
+      pxMaxX: 0,
+      pxMaxY: 0,
+
+      originX: 0,
+      originY: 0,
+      originZ: 0,
+
     init: function( tilesize, data, tileset ) {
+
       this.parent(tilesize, data, tileset);
-      this.theta = 0;
-      this.alpha = 0;
-      this.piOn180 = Math.PI / 180;
-      this.tilesizeOn2 = tilesize / 2;
-      this.tilesizeOn4 = tilesize / 4;
-      this.addDegrees(45, 26.5650512);//35.2643896);
-    },
 
-    setDegrees: function(theta,alpha) {
-      this.setRadians(theta * this.piOn180, alpha * this.piOn180);
-    },
-
-    setRadians: function(theta, alpha) {
-      this.theta = theta;
-      this.alpha = alpha;
+      this.alpha = Math.atan(0.5);
       this.recalculateAngles();
-    },
 
-    addDegrees: function(theta,alpha) {
-      this.addRadians(theta * this.piOn180, alpha * this.piOn180);
-    },
+      /*
+       This is calculated by determining the 'length' of one of the sides of
+       an isometric tile.
+       Derivation:
 
-    addRadians: function(theta, alpha) {
-      this.theta += theta;
-      this.alpha += alpha;
-      this.recalculateAngles();
+       width = tilesize
+       height = (width + 2) / 2
+
+       Given the tile:
+                           [(width / 2) + 1), 0]
+                          #*
+       [0, height / 2]  ##  ##
+                      *#      ##
+                      ##      ##
+                        ##  ##
+                          ##
+
+       The distance between the two points marked (*) can be written as:
+
+       length = sqrt( ((width / 2) + 1)^2 + (height / 2)^2 )
+       
+       The derivation is left as an exercise ;)
+
+       */
+      this.edgeLength = ((this.tilesize + 2) / 2) * Math.sqrt(5) / 2;
     },
 
     recalculateAngles: function() {
-      this.sinTheta = Math.sin(this.theta);
-      this.cosTheta = Math.cos(this.theta);
       this.sinAlpha = Math.sin(this.alpha);
       this.cosAlpha = Math.cos(this.alpha);
     },
 
-    tileToScreen: function (tileX, tileY) {
-      var screenX = this.tilesizeOn2 * (tileX - tileY);
-      var screenY = (this.tilesizeOn4 + 1) * (tileY + tileX) - this.tilesizeOn2;
-      return [Math.floor(screenX), Math.floor(screenY)];
-    },
+    setScreenPos: function(x, y) {
 
-    screenToTile: function (screenX, screenY) {
-      var tileX = (screenX / this.tilesize) + ((screenY + this.tilesizeOn2) / (this.tilesizeOn2 + 2));
-      var tileY = ((screenY + this.tilesizeOn2) / (this.tilesizeOn2 + 2)) - (screenX / this.tilesize);
-      return [tileX, tileY];
-    },
+        this.parent(x, y);
 
-    toScreen: function(worldX, worldY, worldZ) {
-      var xsinzcos = (worldX * this.sinTheta) + (worldZ * this.cosTheta);
-      var screenX = (worldX * this.cosTheta) - (worldZ * this.sinTheta);
-      var screenY = (this.sinAlpha * xsinzcos) + (worldY * this.cosAlpha);
-      screenX *= this.tilesize;
-      screenY *= this.tilesize;
-      return [screenX, screenY];
-    },
+        this.pxOffsetX = this.scroll.x % this.tilesize;
+        this.pxOffsetY = this.scroll.y % this.tilesize;
 
-    toIso: function(screenX, screenY) {
-      var worldX = (screenX * this.cosTheta) + (screenY * this.sinTheta * this.sinAlpha);
-      var worldY = (screenY * this.cosAlpha);
-      var worldZ = -(screenX * this.sinTheta) + (screenY * this.sinAlpha * this.cosTheta);
-      return [worldX, worldY, worldZ];
+        this.pxMinX = -this.pxOffsetX - this.tilesize;
+        this.pxMinY = -this.pxOffsetY - this.tilesize;
+        this.pxMaxX = ig.system.width + this.tilesize - this.pxOffsetX;
+        this.pxMaxY = ig.system.height + this.tilesize - this.pxOffsetY;
+
+        // tile focused at screen center
+        this.tileOffsetX = (this.scroll.x / this.tilesize).toInt();
+        this.tileOffsetY = 0;
+        this.tileOffsetZ = (this.scroll.y / this.tilesize).toInt();
+
+        // world origin (in screen coordinates) based on focus tile
+        this.originX = (this.tileOffsetX - this.tileOffsetZ) * this.cosAlpha * this.edgeLength,
+        this.originY = ((this.tileOffsetX + this.tileOffsetZ + 1) * this.sinAlpha - this.tileOffsetY) * this.edgeLength;
+
+        this.originX += this.pxOffsetX;
+        this.originY += this.pxOffsetY;
+
     },
 
     draw: function() {
@@ -80,33 +96,19 @@ ig.module(
         return;
       }
       
-      if (ig.input.pressed('a'))      this.addDegrees(-1,0);
-      if (ig.input.pressed('d'))      this.addDegrees(1,0);
-      if (ig.input.pressed('w'))      this.addDegrees(0,-1);
-      if (ig.input.pressed('s'))      this.addDegrees(0,1);
-      
       this.drawTiled();
-
-      //console.log('stopped');
-      //ig.system.stopRunLoop();
     },
 
     drawTiled: function() {
+
       var tile = 0,
       anim = null,
-      tileOffsetX = (this.scroll.x / this.tilesize).toInt(),
-      tileOffsetY = (this.scroll.y / this.tilesize).toInt(),
-      pxOffsetX = this.scroll.x % this.tilesize,
-      pxOffsetY = this.scroll.y % this.tilesize,
-      pxMinX = -pxOffsetX - this.tilesize,
-      pxMinY = -pxOffsetY - this.tilesize,
-      pxMaxX = ig.system.width + this.tilesize - pxOffsetX,
-      pxMaxY = ig.system.height + this.tilesize - pxOffsetY,
       iso_pxX = 0,
       iso_pxY = 0;
+
       
-      for( var mapY = -1, pxY = pxMinY; pxY < pxMaxY; mapY++, pxY += this.tilesize) {
-        var tileY = mapY + tileOffsetY;
+      for( var mapY = -1, pxY = this.pxMinY; pxY < this.pxMaxY; mapY++, pxY += this.tilesize) {
+        var tileY = mapY + this.tileOffsetZ;
       
         // Repeat Y?
         if( tileY >= this.height || tileY < 0 ) {
@@ -120,8 +122,8 @@ ig.module(
             : ((tileY+1) % this.height) + this.height - 1;
         }
       
-        for( var mapX = -1, pxX = pxMinX; pxX < pxMaxX; mapX++, pxX += this.tilesize ) {
-          var tileX = mapX + tileOffsetX;
+        for( var mapX = -1, pxX = this.pxMinX; pxX < this.pxMaxX; mapX++, pxX += this.tilesize ) {
+          var tileX = mapX + this.tileOffsetX;
       
           // Repeat X?
           if( tileX >= this.width || tileX < 0 ) {
@@ -137,13 +139,21 @@ ig.module(
 
           // Draw!
           if( (tile = this.data[tileY][tileX]) ) {
-              //screenCoords = this.tileToScreen(tileX, tileY);
-              screenCoords = this.toScreen(tileX, 0, tileY);
-              this.tiles.drawTile(screenCoords[0], screenCoords[1], tile-1, this.tilesize );
+
+              // tile to be rendered
+              var xw = tileX;
+              var yw = 0;
+              var zw = tileY;
+
+              // screen coordinates of arbitrary world tile
+              var xs = ((xw - zw) * this.cosAlpha * this.edgeLength) - this.originX;
+              var ys = (((xw + zw) * this.sinAlpha - yw) * this.edgeLength) - this.originY;
+
+              this.tiles.drawTile(xs.round(), ys.round(), tile-1, this.tilesize );
           }
 
-        } // end for x
-      } // end for y
+        }
+      }
     }
 
   });
