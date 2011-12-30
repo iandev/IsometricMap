@@ -64,6 +64,14 @@ ig.IsometricMap = ig.BackgroundMap.extend({
         this.cosAlpha = Math.cos(this.alpha);
     },
 
+    worldToScreen: function(tileX, height, tileZ) {
+        // screen coordinates of arbitrary world tile
+        var xs = ((tileX - tileZ) * this.cosAlpha * this.edgeLength) - this.originX;
+        var ys = (((tileX + tileZ) * this.sinAlpha - height) * this.edgeLength) - this.originY;
+
+        return [xs.round(), ys.round()];
+    },
+
     setScreenPos: function(x, y) {
 
         this.parent(x, y);
@@ -141,16 +149,9 @@ ig.IsometricMap = ig.BackgroundMap.extend({
                 // Draw!
                 if( (tile = this.data[tileY][tileX]) ) {
 
-                    // tile to be rendered
-                    var xw = tileX;
-                    var yw = 0;
-                    var zw = tileY;
+                    var screen = this.worldToScreen(tileX, 0, tileY);
 
-                    // screen coordinates of arbitrary world tile
-                    var xs = ((xw - zw) * this.cosAlpha * this.edgeLength) - this.originX;
-                    var ys = (((xw + zw) * this.sinAlpha - yw) * this.edgeLength) - this.originY;
-
-                    this.tiles.drawTile(xs.round(), ys.round(), tile-1, this.tilesize );
+                    this.tiles.drawTile(screen[0], screen[1], tile-1, this.tilesize );
                 }
 
             }
