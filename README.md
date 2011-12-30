@@ -41,3 +41,27 @@ init: function() {
 
 },
 ```
+
+Tiles
+----
+
+The isometric graphics used in game must follow the pattern:
+
+```
+      ##
+    **  **
+  **      ** 
+##          ##
+##          ##
+  **      **
+    **  **
+      ##
+```
+
+Where the edges marked (*) can be repeated to any length.
+
+The graphic must be a square for each tile. Ie: if you have a tile which is 14px wide as in the example above, then the graphic area it sits on must be 14px high (even though the tile itself is only 7px high).
+
+Example:
+![14x7 iso tile](http://i.imgur.com/YVjxX.png)
+
