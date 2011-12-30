@@ -9,9 +9,12 @@ ig.module(
 
 ig.IsometricMap = ig.BackgroundMap.extend({
 
-    tileOffsetX: 0,
-    tileOffsetY: 0,
-    tileOffsetZ: 0,
+    worldTileOffsetX: 0,
+    worldTileOffsetY: 0,
+    worldTileOffsetZ: 0,
+
+    screenTileOffsetX: 0,
+    screenTileOffsetY: 0,
 
     pxOffsetX: 0,
     pxOffsetY: 0,
@@ -30,6 +33,9 @@ ig.IsometricMap = ig.BackgroundMap.extend({
         this.parent(tilesize, data, tileset);
 
         this.calculateAngles();
+
+        this.tileHalfWidth = this.tilesize / 2;
+        this.tileHeight = (this.tilesize + 2)/ 2;
 
         /*
            This is calculated by determining the 'length' of one of the sides of
@@ -66,10 +72,17 @@ ig.IsometricMap = ig.BackgroundMap.extend({
 
     worldToScreen: function(tileX, height, tileZ) {
         // screen coordinates of center of world tile
-        var xs = ((tileX - tileZ) * this.cosAlpha * this.edgeLength) - this.originX;
-        var ys = (((tileX + tileZ) * this.sinAlpha - height) * this.edgeLength) - this.originY;
+        var screen = this.worldToScreenRaw(tileX, height, tileZ);
+        screen[0] -= this.originX;
+        screen[1] -= this.originY;
+        return [screen[0].round(), screen[1].round()];
+    },
 
-        return [xs.round(), ys.round()];
+    worldToScreenRaw: function(tileX, height, tileZ) {
+        var xs = ((tileX - tileZ) * this.cosAlpha * this.edgeLength);
+        var ys = (((tileX + tileZ) * this.sinAlpha - height) * this.edgeLength);
+
+        return [xs, ys];
     },
 
     setScreenPos: function(x, y) {
@@ -84,17 +97,33 @@ ig.IsometricMap = ig.BackgroundMap.extend({
         this.pxMaxX = ig.system.width + this.tilesize - this.pxOffsetX;
         this.pxMaxY = ig.system.height + this.tilesize - this.pxOffsetY;
 
-        // tile focused at screen center
-        this.tileOffsetX = (this.scroll.x / this.tilesize).toInt();
-        this.tileOffsetY = 0;
-        this.tileOffsetZ = (this.scroll.y / this.tilesize).toInt();
+        // tile to be focused on at the 'world origin'
+        var newX = (this.scroll.x / this.tilesize).toInt();
+        var newY = -(this.scroll.y / this.tilesize).toInt();
+
+        if (newX < this.screenTileOffsetX) {
+            this.worldTileOffsetZ++;
+            this.worldTileOffsetX--;
+        } else if (newX > this.screenTileOffsetX) {
+            this.worldTileOffsetZ--;
+            this.worldTileOffsetX++;
+        }
+
+        if (newY < this.screenTileOffsetY) {
+            this.worldTileOffsetZ++;
+            this.worldTileOffsetX++;
+        } else if (newY > this.screenTileOffsetY) {
+            this.worldTileOffsetZ--;
+            this.worldTileOffsetX--;
+        }
+
+        this.screenTileOffsetX = newX;
+        this.screenTileOffsetY = newY;
 
         // world origin (in screen coordinates) based on focus tile
-        this.originX = (this.tileOffsetX - this.tileOffsetZ) * this.cosAlpha * this.edgeLength;
-        this.originY = ((this.tileOffsetX + this.tileOffsetZ + 1) * this.sinAlpha - this.tileOffsetY) * this.edgeLength;
-
-        this.originX += this.pxOffsetX;
-        this.originY += this.pxOffsetY;
+        var screen = this.worldToScreenRaw(this.worldTileOffsetX, this.worldTileOffsetY, this.worldTileOffsetZ);
+        this.originX = screen[0] + this.pxOffsetX;
+        this.originY = screen[1] + this.pxOffsetY - (this.screenTileOffsetY * this.tileHeight);
 
     },
 
@@ -116,7 +145,7 @@ ig.IsometricMap = ig.BackgroundMap.extend({
 
         for (var mapY = -1, pxY = this.pxMinY; pxY < this.pxMaxY; mapY++, pxY += this.tilesize) {
 
-            var tileY = mapY + this.tileOffsetZ;
+            var tileY = mapY + this.worldTileOffsetZ;
 
             // Repeat Y?
             if( tileY >= this.height || tileY < 0 ) {
@@ -132,7 +161,7 @@ ig.IsometricMap = ig.BackgroundMap.extend({
 
             for (var mapX = -1, pxX = this.pxMinX; pxX < this.pxMaxX; mapX++, pxX += this.tilesize) {
 
-                var tileX = mapX + this.tileOffsetX;
+                var tileX = mapX + this.worldTileOffsetX;
 
                 // Repeat X?
                 if( tileX >= this.width || tileX < 0 ) {
@@ -152,7 +181,7 @@ ig.IsometricMap = ig.BackgroundMap.extend({
                     var screen = this.worldToScreen(tileX, 0, tileY);
 
                     // note position adjusted to be top-left of image
-                    this.tiles.drawTile(screen[0], screen[1], tile-1, this.tilesize );
+                    this.tiles.drawTile(screen[0] - this.tileHalfWidth, screen[1] - this.tileHeight, tile-1, this.tilesize );
                 }
 
             }
