@@ -93,9 +93,9 @@ IsometricMap = ig.BackgroundMap.extend({
         this.pxOffsetY = this.scroll.y % this.tilesize;
 
         this.pxMinX = -this.pxOffsetX - this.tilesize;
-        this.pxMinY = -this.pxOffsetY - this.tilesize;
-        this.pxMaxX = ig.system.width + this.tilesize - this.pxOffsetX;
-        this.pxMaxY = ig.system.height + this.tilesize - this.pxOffsetY;
+        this.pxMinY = this.pxOffsetY - this.tilesize;
+        this.pxMaxX = ig.system.width + this.tilesize + this.pxOffsetX;
+        this.pxMaxY = ig.system.height + this.tilesize + this.pxOffsetY;
 
         // tile to be focused on at the 'world origin'
         var newX = (this.scroll.x / this.tilesize).toInt();
@@ -141,12 +141,23 @@ IsometricMap = ig.BackgroundMap.extend({
         var tile = 0,
         anim = null,
         iso_pxX = 0,
-        iso_pxY = 0;
+        iso_pxY = 0,
+        pxY = 0,
+        pxX = 0,
+        mapY = -1,
+        mapX = -1;
 
-        for (var mapY = -1, pxY = this.pxMinY; pxY < this.pxMaxY; mapY++, pxY += this.tilesize) {
+        var tileY = mapY + this.worldTileOffsetZ,
+        tileX = mapX + this.worldTileOffsetX,
+        direction = 1;
 
-            var tileY = mapY + this.worldTileOffsetZ;
+        // get coordinates of first tile to be rendered
+        var screen = this.worldToScreen(tileX, 0, tileY);
+        pxX = screen[0];
+        pxY = screen[1];
 
+        while (pxY < this.pxMaxY) {
+/*
             // Repeat Y?
             if( tileY >= this.height || tileY < 0 ) {
 
@@ -159,22 +170,19 @@ IsometricMap = ig.BackgroundMap.extend({
                     : ((tileY+1) % this.height) + this.height - 1;
             }
 
-            for (var mapX = -1, pxX = this.pxMinX; pxX < this.pxMaxX; mapX++, pxX += this.tilesize) {
+            // Repeat X?
+            if( tileX >= this.width || tileX < 0 ) {
 
-                var tileX = mapX + this.worldTileOffsetX;
-
-                // Repeat X?
-                if( tileX >= this.width || tileX < 0 ) {
-
-                    if( !this.repeat ) {
-                        continue;
-                    }
-
-                    tileX = tileX > 0
-                        ? tileX % this.width
-                        : ((tileX+1) % this.width) + this.width - 1;
+                if( !this.repeat ) {
+                    continue;
                 }
 
+                tileX = tileX > 0
+                    ? tileX % this.width
+                    : ((tileX+1) % this.width) + this.width - 1;
+            }
+*/
+            if (tileY >= 0 && tileY < this.height && tileX >= 0 && tileX < this.width) {
                 // Draw!
                 if( (tile = this.data[tileY][tileX]) ) {
 
@@ -183,8 +191,37 @@ IsometricMap = ig.BackgroundMap.extend({
                     // note position adjusted to be top-left of image
                     this.tiles.drawTile(screen[0] - this.tileHalfWidth, screen[1] - this.tileHeight, tile-1, this.tilesize );
                 }
-
             }
+
+            // move along in screen space to the next tile
+            pxX += (this.tilesize * direction);
+
+            // move horizontally (in screen space) to next tile.
+            mapY -= direction;
+            mapX += direction;
+
+            if (pxX >= this.pxMaxX) {
+                // now go from right to left
+                direction = -1;
+                // start at tile on SW side
+                mapY++;
+                // adjust for new tile position
+                pxY += (this.tileHeight / 2);
+                pxX -= (this.tilesize / 2);
+            } else if (pxX <= this.pxMinX) {
+                // now go from left to right
+                direction = 1;
+                // start at tile on SE side
+                mapX++;
+                // adjust for new tile position
+                pxY += (this.tileHeight / 2);
+                pxX += (this.tilesize / 2);
+            }
+
+            // calculate white tile in the map data we're looking at
+            tileY = mapY + this.worldTileOffsetZ;
+            tileX = mapX + this.worldTileOffsetX;
+
         }
     }
 
