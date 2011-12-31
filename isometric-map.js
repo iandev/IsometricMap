@@ -61,7 +61,7 @@ IsometricMap = ig.BackgroundMap.extend({
             The derivation is left as an exercise ;)
 
         */
-        this.edgeLength = ((this.tilesize + 2) / 2) * Math.sqrt(5) / 2;
+        this.edgeLength = (this.tilesize + 2) * 0.559016994;
     },
 
     calculateAngles: function() {
