@@ -144,8 +144,8 @@ IsometricMap = ig.BackgroundMap.extend({
         iso_pxY = 0,
         pxY = 0,
         pxX = 0,
-        mapY = -1,
-        mapX = -1;
+        mapY = -2,
+        mapX = -2;
 
         var tileY = mapY + this.worldTileOffsetZ,
         tileX = mapX + this.worldTileOffsetX,
