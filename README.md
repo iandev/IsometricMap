@@ -5,7 +5,7 @@ Installation
 
 Create the following directory:
 
-lib/plugins/isometricmap
+`lib/plugins/isometricmap`
 
 Place `isometric-map.js` file into directory.
 
@@ -14,7 +14,7 @@ Place `isometric-map.js` file into directory.
 _Note that this step is entirely optional, but allows you to simply use the "this.loadLevel" style of loading a level._
 
 #### Apply the patch
-Apply the patch 0001-Patch[..].patch to your isntallation of ImpactJS.
+Apply the patch `0001-Patch[..].patch` to your isntallation of ImpactJS.
 
 This patch is designed for ImpactJS v1.19
 
@@ -67,7 +67,9 @@ with the class-name of IsometricMap.
 Then your level file would look similar to:
 (note the "type" attribute for the first "layer").
 
+```
 LevelTest=/*JSON[*/{"entities":[],"layer":[{"type":"IsometricMap","name":"BG","width":10,"height":10,"linkWithCollision":false,"visible":1,"tilesetName":"media/tiles.png","repeat":false,"preRender":true,"distance":"1","tilesize":38,"foreground":false,"data":[[1,4],[3,2]]}]}/*]JSON*/;
+```
 
 If no "type" specified, or an unknown class given, will default to "BackgroundMap".
 
