@@ -44,7 +44,7 @@ ig.module(
 
 Then create a new IsometricMap:
 
-```
+```javascript
 init: function() {
 
     var data = [
@@ -67,11 +67,21 @@ with the class-name of IsometricMap.
 Then your level file would look similar to:
 (note the "type" attribute for the first "layer").
 
-```
+```javascript
 LevelTest=/*JSON[*/{"entities":[],"layer":[{"type":"IsometricMap","name":"BG", ..., "data":[[1,4],[3,2]]}]}/*]JSON*/;
 ```
 
 If no "type" specified, or an unknown class given, will default to "BackgroundMap".
+
+This then allows you to do:
+
+```javascript
+init: function() {
+
+    this.loadLevel(LevelTest);
+
+},
+```
 
 Tiles
 ----
