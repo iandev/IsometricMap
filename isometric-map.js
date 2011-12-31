@@ -102,19 +102,23 @@ IsometricMap = ig.BackgroundMap.extend({
         var newY = -(this.scroll.y / this.tileHeight).toInt();
 
         if (newX < this.screenTileOffsetX) {
-            this.worldTileOffsetZ++;
-            this.worldTileOffsetX--;
+            var diff = this.screenTileOffsetX - newX;
+            this.worldTileOffsetZ += diff;
+            this.worldTileOffsetX -= diff;
         } else if (newX > this.screenTileOffsetX) {
-            this.worldTileOffsetZ--;
-            this.worldTileOffsetX++;
+            var diff = newX - this.screenTileOffsetX;
+            this.worldTileOffsetZ -= diff;
+            this.worldTileOffsetX += diff;
         }
 
         if (newY < this.screenTileOffsetY) {
-            this.worldTileOffsetZ++;
-            this.worldTileOffsetX++;
+            var diff = this.screenTileOffsetY - newY;
+            this.worldTileOffsetZ += diff;
+            this.worldTileOffsetX += diff;
         } else if (newY > this.screenTileOffsetY) {
-            this.worldTileOffsetZ--;
-            this.worldTileOffsetX--;
+            var diff = newY - this.screenTileOffsetY;
+            this.worldTileOffsetZ -= diff;
+            this.worldTileOffsetX -= diff;
         }
 
         this.screenTileOffsetX = newX;
