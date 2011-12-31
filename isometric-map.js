@@ -151,40 +151,35 @@ IsometricMap = ig.BackgroundMap.extend({
         tileX = mapX + this.worldTileOffsetX,
         direction = 1;
 
+        var renderTileY = tileY,
+        renderTileX = tileX;
+
         // get coordinates of first tile to be rendered
         var screen = this.worldToScreen(tileX, 0, tileY);
         pxX = screen[0];
         pxY = screen[1];
 
         while (pxY < this.pxMaxY) {
-/*
-            // Repeat Y?
-            if( tileY >= this.height || tileY < 0 ) {
 
-                if( !this.repeat ) {
-                    continue;
+            if (this.repeat) {
+                // Repeat Y?
+                if (tileY >= this.height || tileY < 0) {
+                    renderTileY = tileY > 0
+                        ? tileY % this.height
+                        : ((tileY+1) % this.height) + this.height - 1;
                 }
 
-                tileY = tileY > 0
-                    ? tileY % this.height
-                    : ((tileY+1) % this.height) + this.height - 1;
-            }
-
-            // Repeat X?
-            if( tileX >= this.width || tileX < 0 ) {
-
-                if( !this.repeat ) {
-                    continue;
+                // Repeat X?
+                if (tileX >= this.width || tileX < 0) {
+                    renderTileX = tileX > 0
+                        ? tileX % this.width
+                        : ((tileX+1) % this.width) + this.width - 1;
                 }
-
-                tileX = tileX > 0
-                    ? tileX % this.width
-                    : ((tileX+1) % this.width) + this.width - 1;
             }
-*/
-            if (tileY >= 0 && tileY < this.height && tileX >= 0 && tileX < this.width) {
+
+            if (renderTileY >= 0 && renderTileY < this.height && renderTileX >= 0 && renderTileX < this.width) {
                 // Draw!
-                if( (tile = this.data[tileY][tileX]) ) {
+                if( (tile = this.data[renderTileY][renderTileX]) ) {
 
                     var screen = this.worldToScreen(tileX, 0, tileY);
 
@@ -221,6 +216,9 @@ IsometricMap = ig.BackgroundMap.extend({
             // calculate white tile in the map data we're looking at
             tileY = mapY + this.worldTileOffsetZ;
             tileX = mapX + this.worldTileOffsetX;
+
+            renderTileY = tileY;
+            renderTileX = tileX;
 
         }
     }
