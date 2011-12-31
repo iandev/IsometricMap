@@ -1,0 +1,75 @@
+From 7d14464bcaf798803f0ba5d2fffdb701a7b5c6f7 Mon Sep 17 00:00:00 2001
+From: Jess Telford <jess+git@jes.st>
+Date: Sat, 31 Dec 2011 11:15:15 +1100
+Subject: [PATCH] Patch to allow loading of different Map / Collision from
+ Levels
+
+Requires manual editing of level files. Add a "type" attribute to each layer
+with the class-name of the Map type (should extend BackgroundMap).
+
+For example, if you have the following class:
+
+ig.module(
+    'plugins.isometricmap.isometric-map'
+)
+.requires(
+    'impact.impact',
+    'impact.background-map'
+)
+.defines(function(){
+
+IsometricMap = ig.BackgroundMap.extend({
+    //...
+});
+});
+
+Then your level file would look similar to:
+(note the "type" attribute for the first "layer").
+
+LevelTest=/*JSON[*/{"entities":[],"layer":[{"type":"IsometricMap","name":"BG","width":10,"height":10,"linkWithCollision":false,"visible":1,"tilesetName":"media/tiles.png","repeat":false,"preRender":true,"distance":"1","tilesize":38,"foreground":false,"data":[[1,4],[3,2]]}]}/*]JSON*/;
+
+If no "type" specified, or an unknown class given, will default to "BackgroundMap".
+---
+ lib/impact/game.js |   18 +++++++++++++++---
+ 1 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/lib/impact/game.js b/lib/impact/game.js
+index 110fada..e093440 100644
+--- a/lib/impact/game.js
++++ b/lib/impact/game.js
+@@ -57,11 +57,23 @@ ig.Game = ig.Class.extend({
+ 		this.backgroundMaps = [];
+ 		for( var i = 0; i < data.layer.length; i++ ) {
+ 			var ld = data.layer[i];
++
++			var levelClass = typeof(ld.type) === 'string'
++				? ig.global[ld.type]
++				: ld.type;
++
+ 			if( ld.name == 'collision' ) {
+-				this.collisionMap = new ig.CollisionMap(ld.tilesize, ld.data );
++				if( !levelClass ) {
++					levelClass = ig.CollisionMap;
++				}
++				this.collisionMap = new (levelClass)(ld.tilesize, ld.data );
+ 			}
+ 			else {
+-				var newMap = new ig.BackgroundMap(ld.tilesize, ld.data, ld.tilesetName);
++				if( !levelClass ) {
++					levelClass = ig.BackgroundMap;
++				}
++
++				var newMap = new (levelClass)(ld.tilesize, ld.data, ld.tilesetName);
+ 				newMap.anims = this.backgroundAnims[ld.tilesetName] || {};
+ 				newMap.repeat = ld.repeat;
+ 				newMap.distance = ld.distance;
+@@ -301,4 +313,4 @@ ig.Game.SORT = {
+ 	POS_Y: function( a, b ){ return a.pos.y - b.pos.y; }
+ };
+ 
+-});
+\ No newline at end of file
++});
+-- 
+1.7.6
+

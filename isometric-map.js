@@ -7,7 +7,7 @@ ig.module(
 )
 .defines(function(){
 
-ig.IsometricMap = ig.BackgroundMap.extend({
+IsometricMap = ig.BackgroundMap.extend({
 
     worldTileOffsetX: 0,
     worldTileOffsetY: 0,
