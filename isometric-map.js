@@ -90,16 +90,16 @@ IsometricMap = ig.BackgroundMap.extend({
         this.parent(x, y);
 
         this.pxOffsetX = this.scroll.x % this.tilesize;
-        this.pxOffsetY = this.scroll.y % this.tilesize;
+        this.pxOffsetY = this.scroll.y % this.tileHeight;
 
         this.pxMinX = -this.pxOffsetX - this.tilesize;
-        this.pxMinY = this.pxOffsetY - this.tilesize;
+        this.pxMinY = -this.pxOffsetY - this.tileHeight;
         this.pxMaxX = ig.system.width + this.tilesize + this.pxOffsetX;
-        this.pxMaxY = ig.system.height + this.tilesize + this.pxOffsetY;
+        this.pxMaxY = ig.system.height + this.tileHeight + this.pxOffsetY;
 
         // tile to be focused on at the 'world origin'
         var newX = (this.scroll.x / this.tilesize).toInt();
-        var newY = -(this.scroll.y / this.tilesize).toInt();
+        var newY = -(this.scroll.y / this.tileHeight).toInt();
 
         if (newX < this.screenTileOffsetX) {
             this.worldTileOffsetZ++;
@@ -123,7 +123,7 @@ IsometricMap = ig.BackgroundMap.extend({
         // world origin (in screen coordinates) based on focus tile
         var screen = this.worldToScreenRaw(this.worldTileOffsetX, this.worldTileOffsetY, this.worldTileOffsetZ);
         this.originX = screen[0] + this.pxOffsetX;
-        this.originY = screen[1] + this.pxOffsetY - (this.screenTileOffsetY * this.tileHeight);
+        this.originY = screen[1] + this.pxOffsetY;
 
     },
 
