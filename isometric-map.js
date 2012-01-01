@@ -56,20 +56,21 @@ IsometricMap = ig.BackgroundMap.extend({
     },
 
     drawTiled: function() {
+        this.drawWindow(this.pxMinX, this.pxMinY, this.pxMaxX, this.pxMaxY);
+    },
+
+    drawWindow: function(x1, y1, x2, y2) {
 
         var tile = 0,
-        anim = null,
-        iso_pxX = 0,
-        iso_pxY = 0,
         pxY = 0,
         pxX = 0,
         mapY = -2,
         mapX = -2;
 
-        var worldTileOffset = this.calc.getFocusTile();
+        var worldTileOffset = this.calc.getBaseTileAtScreen();
 
-        var tileY = mapY + worldTileOffset[2],
-        tileX = mapX + worldTileOffset[0],
+        var tileY = mapY + worldTileOffset.y,
+        tileX = mapX + worldTileOffset.x,
         direction = 1;
 
         var renderTileY = tileY,
@@ -77,10 +78,10 @@ IsometricMap = ig.BackgroundMap.extend({
 
         // get coordinates of first tile to be rendered
         var screen = this.calc.worldToScreen(tileX, 0, tileY);
-        pxX = screen[0];
-        pxY = screen[1];
+        pxX = screen.x;
+        pxY = screen.y;
 
-        while (pxY < this.pxMaxY) {
+        while (pxY < y2) {
 
             if (this.repeat) {
                 // Repeat Y?
@@ -105,7 +106,7 @@ IsometricMap = ig.BackgroundMap.extend({
                     var screen = this.calc.worldToScreen(tileX, 0, tileY);
 
                     // note position adjusted to be top-left of image
-                    this.tiles.drawTile(screen[0] - this.tileHalfWidth, screen[1] - this.tileHeight, tile-1, this.tilesize );
+                    this.tiles.drawTile(screen.x - this.tileHalfWidth, screen.y - this.tileHeight, tile-1, this.tilesize );
                 }
             }
 
@@ -116,7 +117,7 @@ IsometricMap = ig.BackgroundMap.extend({
             mapY -= direction;
             mapX += direction;
 
-            if (pxX >= this.pxMaxX) {
+            if (pxX >= x2) {
                 // now go from right to left
                 direction = -1;
                 // start at tile on SW side
@@ -124,7 +125,7 @@ IsometricMap = ig.BackgroundMap.extend({
                 // adjust for new tile position
                 pxY += (this.tileHeight / 2);
                 pxX -= (this.tilesize / 2);
-            } else if (pxX <= this.pxMinX) {
+            } else if (pxX <= x1) {
                 // now go from left to right
                 direction = 1;
                 // start at tile on SE side
@@ -135,8 +136,8 @@ IsometricMap = ig.BackgroundMap.extend({
             }
 
             // calculate white tile in the map data we're looking at
-            tileY = mapY + worldTileOffset[2];
-            tileX = mapX + worldTileOffset[0];
+            tileY = mapY + worldTileOffset.y;
+            tileX = mapX + worldTileOffset.x;
 
             renderTileY = tileY;
             renderTileX = tileX;

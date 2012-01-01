@@ -127,9 +127,9 @@ IsometricCalc = ig.Class.extend({
     worldToScreen: function(tileX, height, tileZ) {
         // screen coordinates of center of world tile
         var screen = this.worldToScreenRaw(tileX, height, tileZ);
-        screen[0] -= this.origin.x;
-        screen[1] -= this.origin.y;
-        return [screen[0].round(), screen[1].round()];
+        screen.x -= this.origin.x;
+        screen.y -= this.origin.y;
+        return {x: screen.x.round(), y: screen.y.round()};
     },
 
     worldToScreenRaw: function(tileX, height, tileZ) {
@@ -140,7 +140,18 @@ IsometricCalc = ig.Class.extend({
         var xs = ((tileX - tileZ) * (this.tileHalfWidth + this.halfStep));
         var ys = (tileX + tileZ) * this.tileHalfHeight - height.toInt();
 
-        return [xs, ys];
+        return {x: xs, y: ys};
+    },
+
+    getBaseTileAtScreen: function(screenX, screenY) {
+
+        var part1 = (screenY + this.origin.y) / (2 * this.tileHalfHeight);
+        var part2 = (screenX + this.origin.x) / (2 * (this.tileHalfWidth + this.halfStep));
+
+        var tileX = (part1 + part2).toInt();
+        var tileY = (part1 - part2).toInt();
+
+        return {x: tileX, y: tileY};
     },
 
     setFocusTile: function(tileX, tileZ, tileHeight, screenOffsetX, screenOffsetY) {
@@ -156,8 +167,8 @@ IsometricCalc = ig.Class.extend({
 
         // world origin (in screen coordinates) based on focus tile
         var screen = this.worldToScreenRaw(this.focusTile.x, this.focusTile.y, this.focusTile.z);
-        this.origin.x = screen[0] + screenOffsetX;
-        this.origin.y = screen[1] + screenOffsetY;
+        this.origin.x = screen.x + screenOffsetX;
+        this.origin.y = screen.y + screenOffsetY;
 
     },
 
@@ -175,7 +186,7 @@ IsometricCalc = ig.Class.extend({
     },
 
     getFocusTile: function() {
-        return [this.focusTile.x, this.focusTile.y, this.focusTile.z];
+        return {x: this.focusTile.x, height: this.focusTile.y, y: this.focusTile.z};
     },
 
     getTileHeight: function() {
