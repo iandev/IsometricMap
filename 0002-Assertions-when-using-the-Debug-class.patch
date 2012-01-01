@@ -1,0 +1,90 @@
+From e3e99a7326c03bd86905cf9a1e69386c9674f5f6 Mon Sep 17 00:00:00 2001
+From: Jess Telford <jess+git@jes.st>
+Date: Sun, 1 Jan 2012 22:45:17 +1100
+Subject: [PATCH] Assertions when using the Debug class.
+
+To invoke an assertion, simply use:
+
+ig.assert(true, "This will never fail");
+ig.assert(false, "This will always fail");
+---
+ lib/impact/debug/menu.js |   24 +++++++++++++++++++++++-
+ lib/impact/impact.js     |    3 ++-
+ 2 files changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/lib/impact/debug/menu.js b/lib/impact/debug/menu.js
+index edef71a..d93a2ca 100644
+--- a/lib/impact/debug/menu.js
++++ b/lib/impact/debug/menu.js
+@@ -22,6 +22,19 @@ ig.System.inject({
+ });
+ 
+ 
++ig.Assertion = ig.Class.extend({
++	message: '',
++
++	init: function(message) {
++		this.message = message;
++	},
++
++	toString: function () {
++		return 'Assertion: ' + this.message;
++	}
++});
++
++
+ ig.Debug = ig.Class.extend({
+ 	options: {},
+ 	panels: {},
+@@ -64,6 +77,8 @@ ig.Debug = ig.Class.extend({
+ 			ig.log = window.console.log.bind(window.console);
+ 		}
+ 		ig.show = this.showNumber.bind(this);
++
++		ig.assert = this.assert.bind(this);
+ 	},
+ 	
+ 	
+@@ -83,6 +98,13 @@ ig.Debug = ig.Class.extend({
+ 		this.numbers[name].textContent = number;
+ 	},
+ 	
++
++	assert: function( cond, msg ) {
++		if( !cond ) {
++			throw new ig.Assertion( msg );
++		}
++	},
++
+ 	
+ 	addPanel: function( panelDef ) {
+ 		// Create the panel and options
+@@ -289,4 +311,4 @@ ig.DebugOption = ig.Class.extend({
+ // Create the debug instance!
+ ig.debug = new ig.Debug();
+ 
+-});
+\ No newline at end of file
++});
+diff --git a/lib/impact/impact.js b/lib/impact/impact.js
+index 81c4def..33f8c2c 100644
+--- a/lib/impact/impact.js
++++ b/lib/impact/impact.js
+@@ -211,6 +211,7 @@ window.ig = {
+ 	log: function() {},
+ 	show: function( name, number ) {},
+ 	mark: function( msg, color ) {},
++	assert: function( cond, msg ) {},
+ 	
+ 	
+ 	_loadScript: function( name, requiredFrom ) {
+@@ -473,4 +474,4 @@ ig.main = function( canvasId, gameClass, fps, width, height, scale, loaderClass
+ 	loader.load();
+ };
+ 
+-});
+\ No newline at end of file
++});
+-- 
+1.7.6
+
