@@ -35,6 +35,7 @@ IsometricCalc = ig.Class.extend({
     
     // dimensions of graphics
     tileWidth: 0,
+    tileHeight: 0,
 
     // how many pixels across per one up
     step: 0,
@@ -48,8 +49,10 @@ IsometricCalc = ig.Class.extend({
     cosAlpha: 0,
 
     // position of the 'origin' tile from the Isometric world in Screen Space
-    originX: 0,
-    originY: 0,
+    origin: {x: 0, y: 0},
+
+    // Screen position
+    screen: {x: 0, y: 0},
 
     staticInstantiate: function(name) {
 
@@ -114,6 +117,7 @@ IsometricCalc = ig.Class.extend({
 
         this.calculateAngles();
         this.calculateLengths();
+        this.setFocusTile(0, 0);
 
     },
 
@@ -141,9 +145,10 @@ IsometricCalc = ig.Class.extend({
             length = sqrt( ((width / 2) + (step / 2))^2 + (height / 2)^2 )
 
         */
-        var tileHeight = (this.tileWidth / this.step) + 1;
+        //this.tileHeight = (this.tileWidth / this.step) + 1;
+        this.tileHeight = (this.tileWidth + 2)/ 2;
         var x1 = (this.tileWidth + this.step) / 2;
-        var y2 = (tileHeight / 2);
+        var y2 = (this.tileHeight / 2);
 
         this.edgeLength = Math.sqrt(Math.pow(x1, 2) + Math.pow(y2, 2));
 
@@ -158,8 +163,8 @@ IsometricCalc = ig.Class.extend({
     worldToScreen: function(tileX, height, tileZ) {
         // screen coordinates of center of world tile
         var screen = this.worldToScreenRaw(tileX, height, tileZ);
-        screen[0] -= this.originX;
-        screen[1] -= this.originY;
+        screen[0] -= this.origin.x;
+        screen[1] -= this.origin.y;
         return [screen[0].round(), screen[1].round()];
     },
 
@@ -183,10 +188,23 @@ IsometricCalc = ig.Class.extend({
 
         // world origin (in screen coordinates) based on focus tile
         var screen = this.worldToScreenRaw(tileX, tileHeight, tileZ);
-        this.originX = screen[0] + screenOffsetX;
-        this.originY = screen[1] + screenOffsetY;
+        this.origin.x = screen[0] + screenOffsetX;
+        this.origin.y = screen[1] + screenOffsetY;
 
     },
+
+    /**
+     * Move the window which is looking into the Isometric world.
+     * Position values are in screen pixels.
+     */
+    setWindowPosition: function(screenX, screenY) {
+
+        this.origin.x += (screenX - this.screen.x);
+        this.origin.y += (screenY - this.screen.y);
+
+        this.screen.x = screenX;
+        this.screen.y = screenY;
+    }
 
 });
 

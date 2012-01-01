@@ -50,35 +50,7 @@ IsometricMap = ig.BackgroundMap.extend({
         this.pxMaxX = ig.system.width + this.tilesize + this.pxOffsetX;
         this.pxMaxY = ig.system.height + this.tileHeight + this.pxOffsetY;
 
-        // tile to be focused on at the 'world origin'
-        var newX = (this.scroll.x / this.tilesize).toInt();
-        var newY = -(this.scroll.y / this.tileHeight).toInt();
-
-        if (newX < this.screenTileOffsetX) {
-            var diff = this.screenTileOffsetX - newX;
-            this.worldTileOffsetZ += diff;
-            this.worldTileOffsetX -= diff;
-        } else if (newX > this.screenTileOffsetX) {
-            var diff = newX - this.screenTileOffsetX;
-            this.worldTileOffsetZ -= diff;
-            this.worldTileOffsetX += diff;
-        }
-
-        if (newY < this.screenTileOffsetY) {
-            var diff = this.screenTileOffsetY - newY;
-            this.worldTileOffsetZ += diff;
-            this.worldTileOffsetX += diff;
-        } else if (newY > this.screenTileOffsetY) {
-            var diff = newY - this.screenTileOffsetY;
-            this.worldTileOffsetZ -= diff;
-            this.worldTileOffsetX -= diff;
-        }
-
-        this.screenTileOffsetX = newX;
-        this.screenTileOffsetY = newY;
-
-        this.calc.setFocusTile(this.worldTileOffsetX, this.worldTileOffsetZ, this.worldTileOffsetY, this.pxOffsetX, this.pxOffsetY);
-
+        this.calc.setWindowPosition(this.scroll.x, this.scroll.y);
 
     },
 
