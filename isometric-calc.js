@@ -54,6 +54,8 @@ IsometricCalc = ig.Class.extend({
     // Screen position
     screen: {x: 0, y: 0},
 
+    focusTile: {x: 0, y: 0, z: 0},
+
     staticInstantiate: function(name) {
 
         if (typeof(name) == "undefined") {
@@ -186,8 +188,12 @@ IsometricCalc = ig.Class.extend({
         if (typeof screenOffsetX == "undefined") screenOffsetX = 0;
         if (typeof screenOffsetY == "undefined") screenOffsetY = 0;
 
+        this.focusTile.x = tileX;
+        this.focusTile.y = tileHeight;
+        this.focusTile.z = tileZ;
+
         // world origin (in screen coordinates) based on focus tile
-        var screen = this.worldToScreenRaw(tileX, tileHeight, tileZ);
+        var screen = this.worldToScreenRaw(this.focusTile.x, this.focusTile.y, this.focusTile.z);
         this.origin.x = screen[0] + screenOffsetX;
         this.origin.y = screen[1] + screenOffsetY;
 
@@ -204,7 +210,11 @@ IsometricCalc = ig.Class.extend({
 
         this.screen.x = screenX;
         this.screen.y = screenY;
-    }
+    },
+
+    getFocusTile: function() {
+        return [this.focusTile.x, this.focusTile.y, this.focusTile.z];
+    },
 
 });
 

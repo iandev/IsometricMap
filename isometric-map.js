@@ -10,13 +10,6 @@ ig.module(
 
 IsometricMap = ig.BackgroundMap.extend({
 
-    worldTileOffsetX: 0,
-    worldTileOffsetY: 0,
-    worldTileOffsetZ: 0,
-
-    screenTileOffsetX: 0,
-    screenTileOffsetY: 0,
-
     pxOffsetX: 0,
     pxOffsetY: 0,
 
@@ -74,8 +67,10 @@ IsometricMap = ig.BackgroundMap.extend({
         mapY = -2,
         mapX = -2;
 
-        var tileY = mapY + this.worldTileOffsetZ,
-        tileX = mapX + this.worldTileOffsetX,
+        var worldTileOffset = this.calc.getFocusTile();
+
+        var tileY = mapY + worldTileOffset[2],
+        tileX = mapX + worldTileOffset[0],
         direction = 1;
 
         var renderTileY = tileY,
@@ -141,8 +136,8 @@ IsometricMap = ig.BackgroundMap.extend({
             }
 
             // calculate white tile in the map data we're looking at
-            tileY = mapY + this.worldTileOffsetZ;
-            tileX = mapX + this.worldTileOffsetX;
+            tileY = mapY + worldTileOffset[2];
+            tileX = mapX + worldTileOffset[0];
 
             renderTileY = tileY;
             renderTileX = tileX;
