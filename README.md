@@ -7,7 +7,7 @@ Create the following directory:
 
 `lib/plugins/isometricmap`
 
-Place `isometric-map.js` file into directory.
+Place `isometric-map.js` and `isometric-calc.js` file into directory.
 
 ### Allow level loading
 
