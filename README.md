@@ -95,17 +95,20 @@ The isometric graphics used in game must follow the pattern:
 ```
       ##
     **  **
-  **      ** 
-##          ##
-##          ##
-  **      **
-    **  **
-      ##
+  **      **                ####                              ########
+##          ## -OR-     ****    ****     -OR-         ********        ********         -OR- [...]
+##          ##      ####            ####      ########                        ########
+  **      **        ####            ####      ########                        ########
+    **  **              ****    ****                  ********        ********
+      ##                    ####                              ########
 ```
 
 Where the edges marked (*) can be repeated to any length.
 
-The graphic must be a square for each tile. Ie: if you have a tile which is 14px wide as in the example above, then the graphic area it sits on must be 14px high (even though the tile itself is only 7px high).
+The number of horizontal pixels per vertical pixel must be a power of 2 greater
+than 1. The example above corresponde to 2, 4, and 8, respectively.
+
+The graphic must be a square for each tile. Ie: if you have a tile which is 14px wide as in the first example above, then the graphic area it sits on must be 14px high (even though the tile itself is only 7px high).
 
 Example:
 ![14x7 iso tile](http://i.imgur.com/YVjxX.png)
