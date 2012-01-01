@@ -35,18 +35,12 @@ IsometricCalc = ig.Class.extend({
     
     // dimensions of graphics
     tileWidth: 0,
+    tileHalfWidth: 0,
     tileHeight: 0,
 
     // how many pixels across per one up
     step: 0,
-
-    // dimensions of tile in Isometric world
-    edgeLength: 0,
-
-    // angles for calculating positions
-    alpha: 0,
-    sinAlpha: 0,
-    cosAlpha: 0,
+    halfStep: 0,
 
     // position of the 'origin' tile from the Isometric world in Screen Space
     origin: {x: 0, y: 0},
@@ -117,49 +111,17 @@ IsometricCalc = ig.Class.extend({
         this.tileWidth = width;
         this.step = step;
 
-        this.calculateAngles();
         this.calculateLengths();
         this.setFocusTile(0, 0);
 
+        return this.getTileHeight();
     },
 
     calculateLengths: function() {
-        /*
-           This is calculated by determining the 'length' of one of the sides of
-           an isometric tile.
-
-           Given:
-           width = horizonal pixels at tile's widest point
-           step = how many pixels across per 1 up
-           height = vertical pixels at base tile's tallest point
-
-           Given the tile:
-                               [(width / 2) + (step / 2), 0]
-                              #*
-           [0, height / 2]  ##  ##
-                          *#      ##
-                          ##      ##
-                            ##  ##
-                              ##
-
-            The distance between the two points marked (*) can be written as:
-
-            length = sqrt( ((width / 2) + (step / 2))^2 + (height / 2)^2 )
-
-        */
-        //this.tileHeight = (this.tileWidth / this.step) + 1;
-        this.tileHeight = (this.tileWidth + 2)/ 2;
-        var x1 = (this.tileWidth + this.step) / 2;
-        var y2 = (this.tileHeight / 2);
-
-        this.edgeLength = Math.sqrt(Math.pow(x1, 2) + Math.pow(y2, 2));
-
-    },
-
-    calculateAngles: function() {
-        this.alpha = Math.atan(1 / this.step);
-        this.sinAlpha = Math.sin(this.alpha);
-        this.cosAlpha = Math.cos(this.alpha);
+        this.tileHeight = (this.tileWidth / this.step) + 1;
+        this.tileHalfWidth = this.tileWidth / 2;
+        this.tileHalfHeight = this.tileHeight / 2;
+        this.halfStep = this.step / 2;
     },
 
     worldToScreen: function(tileX, height, tileZ) {
@@ -175,8 +137,8 @@ IsometricCalc = ig.Class.extend({
             this.tileWidth != 0,
             "You must call .setTileDimensions() at least once"
         );
-        var xs = ((tileX - tileZ) * this.cosAlpha * this.edgeLength);
-        var ys = (((tileX + tileZ) * this.sinAlpha - height) * this.edgeLength);
+        var xs = ((tileX - tileZ) * (this.tileHalfWidth + this.halfStep));
+        var ys = (tileX + tileZ) * this.tileHalfHeight - height.toInt();
 
         return [xs, ys];
     },
@@ -214,6 +176,10 @@ IsometricCalc = ig.Class.extend({
 
     getFocusTile: function() {
         return [this.focusTile.x, this.focusTile.y, this.focusTile.z];
+    },
+
+    getTileHeight: function() {
+        return this.tileHeight;
     },
 
 });

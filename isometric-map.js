@@ -25,10 +25,9 @@ IsometricMap = ig.BackgroundMap.extend({
         this.parent(tilesize, data, tileset);
 
         this.calc = new IsometricCalc("Map");
-        this.calc.setTileDimensions(this.tilesize, 2);
+        this.tileHeight = this.calc.setTileDimensions(this.tilesize, 2);
 
         this.tileHalfWidth = this.tilesize / 2;
-        this.tileHeight = (this.tilesize + 2)/ 2;
     },
 
     setScreenPos: function(x, y) {
