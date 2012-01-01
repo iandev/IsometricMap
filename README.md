@@ -13,7 +13,7 @@ Place `isometric-map.js` and `isometric-calc.js` file into directory.
 
 Apply the patch `0002-[..].patch` to your installation of ImpactJS. This patch is designed for ImpactJS v1.19.
 
-If you cannot (or do not want to) apply these patches, you must remove all of the calls to `ig.assert(...)`.
+If you cannot (or do not want to) apply this patch, you must remove all of the calls to `ig.assert(...)`.
 
 ### Allow .loadLevel() loading
 
