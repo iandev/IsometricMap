@@ -9,16 +9,18 @@ Create the following directory:
 
 Place `isometric-map.js` and `isometric-calc.js` file into directory.
 
-### Allow level loading
+### Apply Assertion patch
+
+Apply the patch `0002-[..].patch` to your installation of ImpactJS. This patch is designed for ImpactJS v1.19.
+
+If you cannot (or do not want to) apply these patches, you must remove all of the calls to `ig.assert(...)`.
+
+### Allow .loadLevel() loading
 
 _Note that this step is entirely optional, but allows you to simply use the "this.loadLevel" style of loading a level._
 
-#### Apply the patches
-Apply the patches `0001-[..].patch` and `0002-[..].patch` to your installation of ImpactJS.
-
-These patches are designed for ImpactJS v1.19
-
-If you cannot (or do not want to) apply these patches, you must remove all of the calls to `ig.assert(...)`.
+#### Apply the patch
+Apply the patch `0001-[..].patch` to your installation of ImpactJS. This patch is designed for ImpactJS v1.19
 
 Usage
 ----
