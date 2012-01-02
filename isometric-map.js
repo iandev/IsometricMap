@@ -25,7 +25,7 @@ IsometricMap = ig.BackgroundMap.extend({
         this.parent(tilesize, data, tileset);
 
         this.calc = new IsometricCalc("Map");
-        this.tileHeight = this.calc.setTileDimensions(this.tilesize, 2);
+        this.tileHeight = this.calc.setTileDimensions(this.tilesize, 4);
 
         this.tileHalfWidth = this.tilesize / 2;
     },
@@ -37,10 +37,10 @@ IsometricMap = ig.BackgroundMap.extend({
         this.pxOffsetX = this.scroll.x % this.tilesize;
         this.pxOffsetY = this.scroll.y % this.tileHeight;
 
-        this.pxMinX = -this.pxOffsetX - this.tilesize;
-        this.pxMinY = -this.pxOffsetY - this.tileHeight;
+        this.pxMinX = this.pxOffsetX - this.tilesize;
+        this.pxMinY = this.pxOffsetY - this.tilesize;
         this.pxMaxX = ig.system.width + this.tilesize + this.pxOffsetX;
-        this.pxMaxY = ig.system.height + this.tileHeight + this.pxOffsetY;
+        this.pxMaxY = ig.system.height + this.tilesize + this.pxOffsetY;
 
         this.calc.setWindowPosition(this.scroll.x, this.scroll.y);
 
@@ -64,10 +64,10 @@ IsometricMap = ig.BackgroundMap.extend({
         var tile = 0,
         pxY = 0,
         pxX = 0,
-        mapY = -2,
-        mapX = -2;
+        mapY = 0,
+        mapX = 0;
 
-        var worldTileOffset = this.calc.getBaseTileAtScreen();
+        var worldTileOffset = this.calc.getBaseTileAtScreen(x1, y1);
 
         var tileY = mapY + worldTileOffset.y,
         tileX = mapX + worldTileOffset.x,
@@ -106,7 +106,9 @@ IsometricMap = ig.BackgroundMap.extend({
                     var screen = this.calc.worldToScreen(tileX, 0, tileY);
 
                     // note position adjusted to be top-left of image
-                    this.tiles.drawTile(screen.x - this.tileHalfWidth, screen.y - this.tileHeight, tile-1, this.tilesize );
+                    // offset from bottom of graphic file to top
+                    var yOffset = this.tilesize - (this.tileHeight / 2);
+                    this.tiles.drawTile(screen.x - this.tileHalfWidth, screen.y - yOffset, tile-1, this.tilesize );
                 }
             }
 
@@ -135,7 +137,7 @@ IsometricMap = ig.BackgroundMap.extend({
                 pxX += (this.tilesize / 2);
             }
 
-            // calculate white tile in the map data we're looking at
+            // calculate which tile in the map data we're looking at
             tileY = mapY + worldTileOffset.y;
             tileX = mapX + worldTileOffset.x;
 
