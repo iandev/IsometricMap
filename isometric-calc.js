@@ -144,6 +144,9 @@ IsometricCalc = ig.Class.extend({
     },
 
     getBaseTileAtScreen: function(screenX, screenY) {
+                             
+        if (typeof screenX == "undefined") screenX = 0;
+        if (typeof screenY == "undefined") screenY = 0;
 
         var part1 = (screenY + this.origin.y) / (2 * this.tileHalfHeight);
         var part2 = (screenX + this.origin.x) / (2 * (this.tileHalfWidth + this.halfStep));
