@@ -37,7 +37,7 @@ IsometricMap = ig.BackgroundMap.extend({
         this.pxOffsetX = this.scroll.x % this.tilesize;
         this.pxOffsetY = this.scroll.y % this.tileHeight;
 
-        this.pxMinX = this.pxOffsetX - this.tilesize;
+        this.pxMinX = this.pxOffsetX - (this.tilesize * 2);
         this.pxMinY = this.pxOffsetY - this.tilesize;
         this.pxMaxX = ig.system.width + this.tilesize + this.pxOffsetX;
         this.pxMaxY = ig.system.height + this.tilesize + this.pxOffsetY;
