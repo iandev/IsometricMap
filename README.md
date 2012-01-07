@@ -1,3 +1,8 @@
+Isometric Map
+----
+
+This is an Isometric Map plugin for the [ImpactJS Javascript Game Engine](http://impactjs.com/) v1.19, released under the FreeBSD License.
+
 Installation
 ----
 
